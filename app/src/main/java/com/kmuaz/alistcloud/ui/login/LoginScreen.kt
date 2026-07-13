@@ -23,7 +23,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    onLoginSuccess: () -> Unit
+) {
 
     var server by remember {
         mutableStateOf("")
@@ -141,9 +143,8 @@ fun LoginScreen() {
 
         Button(
             onClick = {
-
-            },
-            modifier = Modifier.fillMaxWidth()
+                onLoginSuccess()
+            }
         ) {
             Text("登录")
         }

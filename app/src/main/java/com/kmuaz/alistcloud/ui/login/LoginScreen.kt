@@ -21,26 +21,68 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.collectAsState
+import com.kmuaz.alistcloud.viewmodel.LoginViewModel
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit
 ) {
 
-    var server by remember {
-        mutableStateOf("")
+    val viewModel: LoginViewModel = viewModel()
+
+    val config by viewModel.serverConfig.collectAsState()
+
+    val loading by viewModel.loading.collectAsState()
+
+    val loginState by viewModel.loginState.collectAsState()
+
+    val error by viewModel.error.collectAsState()
+
+    var server by remember(config.server) {
+        mutableStateOf(config.server)
     }
 
-    var username by remember {
-        mutableStateOf("")
+    var username by remember(config.username) {
+        mutableStateOf(config.username)
     }
 
-    var password by remember {
-        mutableStateOf("")
+    var password by remember(config.password) {
+        mutableStateOf(config.password)
     }
 
     var passwordVisible by remember {
         mutableStateOf(false)
+    }
+
+    val context = LocalContext.current
+
+    LaunchedEffect(error) {
+
+        if (error.isNotEmpty()) {
+
+            Toast.makeText(
+                context,
+                error,
+                Toast.LENGTH_SHORT
+            ).show()
+
+        }
+
+    }
+
+
+    LaunchedEffect(loginState) {
+
+        if (loginState) {
+
+            onLoginSuccess()
+
+        }
+
     }
 
     Column(
@@ -142,10 +184,24 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
+
             onClick = {
-                onLoginSuccess()
-            }
-        ) {
+
+                viewModel.login(
+
+                    server = server,
+
+                    username = username,
+
+                    password = password
+
+                )
+
+            },enabled = !loading
+
+        )
+
+          {
             Text("登录")
         }
     }

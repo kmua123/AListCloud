@@ -14,13 +14,33 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.collectAsState
+import com.kmuaz.alistcloud.model.ServerConfig
+import com.kmuaz.alistcloud.viewmodel.SettingViewModel
 
 @Composable
 fun SettingScreen() {
 
-    var server by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val viewModel: SettingViewModel = viewModel()
+
+    val config by viewModel.serverConfig.collectAsState()
+
+    val context = LocalContext.current
+
+    var server by remember(config.server) {
+        mutableStateOf(config.server)
+    }
+
+    var username by remember(config.username) {
+        mutableStateOf(config.username)
+    }
+
+    var password by remember(config.password) {
+        mutableStateOf(config.password)
+    }
 
     Column(
         modifier = Modifier
@@ -74,7 +94,29 @@ fun SettingScreen() {
         Spacer(modifier = Modifier.height(12.dp))
 
         Button(
-            onClick = {},
+            onClick = {
+
+                viewModel.saveConfig(
+
+                    ServerConfig(
+
+                        server = server,
+
+                        username = username,
+
+                        password = password
+
+                    )
+
+                )
+
+                Toast.makeText(
+                    context,
+                    "保存成功",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("保存")

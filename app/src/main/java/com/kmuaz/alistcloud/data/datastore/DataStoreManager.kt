@@ -32,22 +32,25 @@ class DataStoreManager(private val context: Context) {
     }
 
     suspend fun saveServerConfig(config: ServerConfig) {
-        suspend fun saveToken(token: String) {
-
-            context.dataStore.edit { preferences ->
-
-                preferences[TOKEN] = token
-
-            }
-
-        }
 
         context.dataStore.edit { preferences ->
 
             preferences[SERVER] = config.server
             preferences[USERNAME] = config.username
             preferences[PASSWORD] = config.password
+
         }
+
+    }
+
+    suspend fun saveToken(token: String) {
+
+        context.dataStore.edit { preferences ->
+
+            preferences[TOKEN] = token
+
+        }
+
     }
 
     val serverConfig: Flow<ServerConfig> =

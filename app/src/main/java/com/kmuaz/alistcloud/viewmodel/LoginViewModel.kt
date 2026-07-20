@@ -13,6 +13,7 @@ import com.kmuaz.alistcloud.model.ServerConfig
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
+
 class LoginViewModel(
     application: Application
 ) : AndroidViewModel(application) {
@@ -57,6 +58,16 @@ class LoginViewModel(
                 )
 
                 if (result.code == 200) {
+
+                    dataStore.saveServerConfig(
+
+                        ServerConfig(
+                            server = server,
+                            username = username,
+                            password = password
+                        )
+
+                    )
 
                     result.data?.token?.let {
 

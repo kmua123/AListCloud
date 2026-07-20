@@ -1,120 +1,95 @@
 package com.kmuaz.alistcloud.ui.home
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
+import android.widget.Toast
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.kmuaz.alistcloud.viewmodel.HomeViewModel
 
 @Composable
 fun HomeScreen(
     onSettingClick: () -> Unit
 ) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp),
+    val viewModel: HomeViewModel = viewModel()
 
-        verticalArrangement = Arrangement.Top
-    ) {
+    val files by viewModel.files.collectAsState()
+    val loading by viewModel.loading.collectAsState()
+    val error by viewModel.error.collectAsState()
 
-        Text(
-            text = "☁ AList Cloud",
-            style = MaterialTheme.typography.headlineMedium
-        )
+    val context = LocalContext.current
 
-        Spacer(modifier = Modifier.height(8.dp))
+    LaunchedEffect(Unit) {
 
-        Text(
-            text = "欢迎回来 👋",
-            style = MaterialTheme.typography.titleLarge
-        )
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        Text(
-            text = "连接你的 AList/OpenList，随时随地访问 NAS。"
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        MenuCard(
-            title = "📁 我的文件",
-            onClick = {}
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        MenuCard(
-            "⬇ 下载管理",
-            onClick = {}
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        MenuCard(
-            "⭐ 收藏",
-            onClick = {}
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        MenuCard(
-            title = "⚙ 设置",
-            onClick = onSettingClick
-        )
-
-        Spacer(modifier = Modifier.height(28.dp))
-
-        HorizontalDivider()
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(
-            text = "服务器状态",
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text("🟢 未连接")
+        viewModel.loadRootFiles()
 
     }
 
-}
+    LaunchedEffect(error) {
 
-@Composable
-fun MenuCard(
-    title: String,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-        onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
-        )
-    ) {
+        if (error.isNotEmpty()) {
 
-        Text(
-            text = title,
-            modifier = Modifier.padding(20.dp),
-            style = MaterialTheme.typography.titleMedium
-        )
+            Toast.makeText(
+                context,
+                error,
+                Toast.LENGTH_SHORT
+            ).show()
+
+        }
 
     }
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+        if (loading) {
+
+            CircularProgressIndicator(
+                modifier = Modifier.align(
+                    Alignment.Center
+                )
+            )
+
+        } else {
+
+            LazyColumn(
+
+                modifier = Modifier.fillMaxSize(),
+
+                contentPadding = PaddingValues(16.dp)
+
+            ) {
+
+                items(files) { file ->
+
+                    Text(
+
+                        text = file.name,
+
+                        style = MaterialTheme.typography.bodyLarge,
+
+                        modifier = Modifier.padding(
+                            vertical = 8.dp
+                        )
+
+                    )
+
+                }
+
+            }
+
+        }
+
+    }
+
 }

@@ -1,4 +1,5 @@
 package com.kmuaz.alistcloud.ui.login
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import com.kmuaz.alistcloud.viewmodel.LoginViewModel
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
+import android.util.Log
 
 @Composable
 fun LoginScreen(
@@ -184,21 +186,22 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-
             onClick = {
 
+                Log.d("AListCloud", "UI server = $server")
+                Log.d("AListCloud", "UI username = $username")
+
+                android.util.Log.d("AListCloud", "UI Server = $server")
+                android.util.Log.d("AListCloud", "UI Username = $username")
+
                 viewModel.login(
-
                     server = server,
-
                     username = username,
-
                     password = password
-
                 )
 
-            },enabled = !loading
-
+            },
+            enabled = !loading
         )
 
           {

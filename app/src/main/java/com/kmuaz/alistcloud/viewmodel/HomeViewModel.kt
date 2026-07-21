@@ -20,6 +20,12 @@ class HomeViewModel(
     private val dataStore =
         DataStoreManager(application)
 
+    private val _currentPath =
+        MutableStateFlow("/")
+
+    val currentPath: StateFlow<String> =
+        _currentPath
+
     private val _files =
         MutableStateFlow<List<FileItem>>(emptyList())
 
@@ -37,7 +43,9 @@ class HomeViewModel(
 
     val error: StateFlow<String> =
         _error
-    fun loadRootFiles() {
+    fun loadFiles(path: String) {
+
+        _currentPath.value = path
 
         viewModelScope.launch {
 
@@ -50,9 +58,10 @@ class HomeViewModel(
                 val token = dataStore.token.first()
 
                 val result =
-                    repository.getRootFiles(
+                    repository.getFiles(
                         config.server,
-                        token
+                        token,
+                        path
                     )
 
                 if (result.code == 200) {

@@ -14,7 +14,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kmuaz.alistcloud.viewmodel.HomeViewModel
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onSettingClick: () -> Unit
@@ -25,12 +32,13 @@ fun HomeScreen(
     val files by viewModel.files.collectAsState()
     val loading by viewModel.loading.collectAsState()
     val error by viewModel.error.collectAsState()
+    val currentPath by viewModel.currentPath.collectAsState()
 
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
 
-        viewModel.loadRootFiles()
+        viewModel.loadFiles("/")
 
     }
 
@@ -48,41 +56,97 @@ fun HomeScreen(
 
     }
 
-    Box(
+    Column(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        if (loading) {
+        TopAppBar(
 
-            CircularProgressIndicator(
-                modifier = Modifier.align(
-                    Alignment.Center
-                )
-            )
+            title = {
 
-        } else {
+                Text(currentPath)
 
-            LazyColumn(
+            },
 
-                modifier = Modifier.fillMaxSize(),
+            navigationIcon = {
 
-                contentPadding = PaddingValues(16.dp)
+                if (currentPath != "/") {
 
-            ) {
+                    IconButton(
+                        onClick = {
 
-                items(files) { file ->
+                            val parent = currentPath.substringBeforeLast("/")
 
-                    Text(
+                            val newPath =
+                                if (parent.isEmpty()) "/"
+                                else parent
 
-                        text = file.name,
+                            viewModel.loadFiles(newPath)
 
-                        style = MaterialTheme.typography.bodyLarge,
+                        }
+                    ) {
 
-                        modifier = Modifier.padding(
-                            vertical = 8.dp
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = null
                         )
 
+                    }
+
+                }
+
+            }
+
+        )
+
+        Box(
+            modifier = Modifier.weight(1f)
+        ) {
+
+            if (loading) {
+
+                CircularProgressIndicator(
+                    modifier = Modifier.align(
+                        Alignment.Center
                     )
+                )
+
+            } else {
+
+                LazyColumn(
+
+                    modifier = Modifier.fillMaxSize(),
+
+                    contentPadding = PaddingValues(16.dp)
+
+                ) {
+
+                    items(files) { file ->
+
+                        FileItemRow(
+
+                            file = file,
+
+                            onClick = {
+
+                                if (file.is_dir) {
+
+                                    val nextPath =
+                                        if (currentPath == "/")
+                                            "/${file.name}"
+                                        else
+                                            "$currentPath/${file.name}"
+
+                                    viewModel.loadFiles(nextPath)
+
+
+                                }
+
+                            }
+
+                        )
+
+                    }
 
                 }
 

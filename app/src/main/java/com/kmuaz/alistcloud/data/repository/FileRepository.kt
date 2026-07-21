@@ -6,9 +6,10 @@ import com.kmuaz.alistcloud.data.network.model.FileListResponse
 
 class FileRepository {
 
-    suspend fun getRootFiles(
+    suspend fun getFiles(
         server: String,
-        token: String
+        token: String,
+        path: String
     ): FileListResponse {
 
         return RetrofitClient
@@ -18,7 +19,7 @@ class FileRepository {
                 token = token,
 
                 request = FileListRequest(
-                    path = "/"
+                    path = path
                 )
 
             )

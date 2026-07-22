@@ -2,8 +2,6 @@ package com.kmuaz.alistcloud.ui.home
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,11 +12,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kmuaz.alistcloud.viewmodel.HomeViewModel
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,40 +53,27 @@ fun HomeScreen(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        TopAppBar(
+        HomeTopBar(
 
-            title = {
+            currentPath = currentPath,
 
-                Text(currentPath)
+            onBackClick = {
 
-            },
+                val parent =
 
-            navigationIcon = {
+                    currentPath.substringBeforeLast(
+                        "/",
+                        ""
+                    )
 
-                if (currentPath != "/") {
+                viewModel.loadFiles(
 
-                    IconButton(
-                        onClick = {
+                    if (parent.isBlank())
+                        "/"
+                    else
+                        parent
 
-                            val parent = currentPath.substringBeforeLast("/")
-
-                            val newPath =
-                                if (parent.isEmpty()) "/"
-                                else parent
-
-                            viewModel.loadFiles(newPath)
-
-                        }
-                    ) {
-
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = null
-                        )
-
-                    }
-
-                }
+                )
 
             }
 
@@ -113,42 +93,19 @@ fun HomeScreen(
 
             } else {
 
-                LazyColumn(
+                FileList(
 
-                    modifier = Modifier.fillMaxSize(),
+                    files = files,
 
-                    contentPadding = PaddingValues(16.dp)
+                    currentPath = currentPath,
 
-                ) {
+                    onFolderClick = {
 
-                    items(files) { file ->
-
-                        FileItemRow(
-
-                            file = file,
-
-                            onClick = {
-
-                                if (file.is_dir) {
-
-                                    val nextPath =
-                                        if (currentPath == "/")
-                                            "/${file.name}"
-                                        else
-                                            "$currentPath/${file.name}"
-
-                                    viewModel.loadFiles(nextPath)
-
-
-                                }
-
-                            }
-
-                        )
+                        viewModel.loadFiles(it)
 
                     }
 
-                }
+                )
 
             }
 

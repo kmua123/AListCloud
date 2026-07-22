@@ -13,6 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.kmuaz.alistcloud.data.network.model.FileItem
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import com.kmuaz.alistcloud.ui.home.formatFileSize
+import com.kmuaz.alistcloud.ui.home.formatTime
+import com.kmuaz.alistcloud.ui.home.getFileIcon
 
 @Composable
 fun FileItemRow(
@@ -29,7 +32,7 @@ fun FileItemRow(
             if (!file.is_dir) {
 
                 Text(
-                    text = formatFileSize(file.size),
+                    text = "${formatFileSize(file.size)} · ${formatTime(file.modified)}",
                     style = MaterialTheme.typography.bodySmall
                 )
 
@@ -40,13 +43,11 @@ fun FileItemRow(
         leadingContent = {
 
             Icon(
-                imageVector =
-                    if (file.is_dir)
-                        Icons.Default.Folder
-                    else
-                        Icons.Default.InsertDriveFile,
+
+                imageVector = getFileIcon(file),
 
                 contentDescription = null
+
             )
 
         },
@@ -73,19 +74,4 @@ fun FileItemRow(
     )
 
 
-}
-private fun formatFileSize(size: Long): String {
-
-    if (size <= 0L) return ""
-
-    val kb = 1024.0
-    val mb = kb * 1024
-    val gb = mb * 1024
-
-    return when {
-        size >= gb -> String.format("%.2f GB", size / gb)
-        size >= mb -> String.format("%.2f MB", size / mb)
-        size >= kb -> String.format("%.2f KB", size / kb)
-        else -> "$size B"
-    }
 }

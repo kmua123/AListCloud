@@ -32,6 +32,12 @@ class HomeViewModel(
     val files: StateFlow<List<FileItem>> =
         _files
 
+    private val _refreshing =
+        MutableStateFlow(false)
+
+    val refreshing: StateFlow<Boolean> =
+        _refreshing
+
     private val _loading =
         MutableStateFlow(false)
 
@@ -43,13 +49,20 @@ class HomeViewModel(
 
     val error: StateFlow<String> =
         _error
-    fun loadFiles(path: String) {
+    fun loadFiles(
+        path: String,
+        refresh: Boolean = false
+    ) {
 
         _currentPath.value = path
 
         viewModelScope.launch {
 
-            _loading.value = true
+            if (refresh) {
+                _refreshing.value = true
+            } else {
+                _loading.value = true
+            }
             _error.value = ""
 
             try {
@@ -84,6 +97,7 @@ class HomeViewModel(
             }
 
             _loading.value = false
+            _refreshing.value = false
 
         }
 

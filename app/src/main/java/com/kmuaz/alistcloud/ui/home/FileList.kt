@@ -16,7 +16,9 @@ fun FileList(
 
     currentPath: String,
 
-    onFolderClick: (String) -> Unit
+    onItemClick: (FileItem) -> Unit,
+
+    onItemLongClick: (FileItem) -> Unit
 
 ) {
 
@@ -36,18 +38,13 @@ fun FileList(
 
                 onClick = {
 
-                    if (file.is_dir) {
+                    onItemClick(file)
 
-                        val nextPath =
+                },
 
-                            if (currentPath == "/")
-                                "/${file.name}"
-                            else
-                                "$currentPath/${file.name}"
+                onLongClick = {
 
-                        onFolderClick(nextPath)
-
-                    }
+                    onItemLongClick(file)
 
                 }
 

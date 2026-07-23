@@ -13,6 +13,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kmuaz.alistcloud.viewmodel.HomeViewModel
 import androidx.compose.material3.ExperimentalMaterial3Api
+import com.kmuaz.alistcloud.data.network.model.FileItem
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.Button
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,6 +30,12 @@ fun HomeScreen(
     val loading by viewModel.loading.collectAsState()
     val error by viewModel.error.collectAsState()
     val currentPath by viewModel.currentPath.collectAsState()
+
+    var selectedFile by remember {
+        mutableStateOf<FileItem?>(null)
+    }
+
+    val sheetState = rememberModalBottomSheetState()
 
     val context = LocalContext.current
 
@@ -99,13 +109,71 @@ fun HomeScreen(
 
                     currentPath = currentPath,
 
-                    onFolderClick = {
+                    onItemClick = {
 
-                        viewModel.loadFiles(it)
+                        if (it.is_dir) {
+
+                            viewModel.loadFiles(
+
+                                if (currentPath == "/")
+                                    "/${it.name}"
+                                else
+                                    "$currentPath/${it.name}"
+
+                            )
+
+                        }
+
+                    },
+
+                    onItemLongClick = {
+
+                        selectedFile = it
+
+                        Toast.makeText(
+                            context,
+                            "长按：" + it.name,
+                            Toast.LENGTH_SHORT
+                        ).show()
 
                     }
 
                 )
+
+            }
+
+        }
+
+    }
+    if (selectedFile != null) {
+
+        ModalBottomSheet(
+
+            onDismissRequest = {
+
+                selectedFile = null
+
+            },
+
+            sheetState = sheetState
+
+        ) {
+
+            Text(
+                text = selectedFile!!.name
+            )
+
+            Button(
+
+                onClick = {
+
+                    selectedFile = null
+
+                }
+
+            ) {
+
+                Text("关闭")
 
             }
 

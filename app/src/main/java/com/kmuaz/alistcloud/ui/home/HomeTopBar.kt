@@ -2,6 +2,7 @@ package com.kmuaz.alistcloud.ui.home
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -13,7 +14,8 @@ import androidx.compose.runtime.Composable
 @Composable
 fun HomeTopBar(
     currentPath: String,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onDownloadsClick: () -> Unit
 ) {
 
     TopAppBar(
@@ -41,6 +43,15 @@ fun HomeTopBar(
 
             }
 
+        },
+
+        actions = {
+            IconButton(onClick = onDownloadsClick) {
+                Icon(
+                    imageVector = Icons.Default.Download,
+                    contentDescription = "下载任务"
+                )
+            }
         }
 
     )

@@ -4,7 +4,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import android.util.Log
 
 object RetrofitClient {
 
@@ -25,14 +24,21 @@ object RetrofitClient {
         }
 
         val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = HttpLoggingInterceptor.Level.NONE
         }
 
         val client = OkHttpClient.Builder()
-            .addInterceptor(logging)
+            .addInterceptor { chain ->
+                val response = chain.proceed(chain.request())
+                if (chain.request().url.encodedPath.startsWith("/api/") && response.isSuccessful &&
+                    response.header("Content-Type").orEmpty().contains("text/html")) {
+                    response.close()
+                    throw java.io.IOException("服务器不支持此接口：${chain.request().url.encodedPath}，请检查 AList 版本")
+                }
+                response
+            }
+            .addInterceptor(logging).connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS).readTimeout(120, java.util.concurrent.TimeUnit.SECONDS).writeTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
             .build()
-
-        Log.d("AListCloud", "Retrofit URL = $url")
 
         return Retrofit.Builder()
             .baseUrl(url)

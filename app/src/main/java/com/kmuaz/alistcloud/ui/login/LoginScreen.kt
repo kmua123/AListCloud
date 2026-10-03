@@ -27,7 +27,12 @@ import androidx.compose.runtime.collectAsState
 import com.kmuaz.alistcloud.viewmodel.LoginViewModel
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
-import android.util.Log
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.filled.Cloud
 
 @Composable
 fun LoginScreen(
@@ -90,17 +95,14 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp),
+            .imePadding().verticalScroll(rememberScrollState()).padding(28.dp),
 
         horizontalAlignment = Alignment.CenterHorizontally,
 
         verticalArrangement = Arrangement.Center
     ) {
 
-        Text(
-            text = "☁",
-            fontSize = 64.sp
-        )
+        Icon(Icons.Default.Cloud, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.height(64.dp))
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -112,7 +114,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "现代化开源 AList 客户端"
+            text = "连接你的云盘，让文件触手可及"
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -188,12 +190,6 @@ fun LoginScreen(
         Button(
             onClick = {
 
-                Log.d("AListCloud", "UI server = $server")
-                Log.d("AListCloud", "UI username = $username")
-
-                android.util.Log.d("AListCloud", "UI Server = $server")
-                android.util.Log.d("AListCloud", "UI Username = $username")
-
                 viewModel.login(
                     server = server,
                     username = username,
@@ -201,11 +197,11 @@ fun LoginScreen(
                 )
 
             },
-            enabled = !loading
+            modifier = Modifier.fillMaxWidth().height(52.dp), shape = RoundedCornerShape(16.dp), enabled = !loading && server.isNotBlank()
         )
 
           {
-            Text("登录")
+            Text(if (loading) "正在连接…" else "连接云盘")
         }
     }
 }

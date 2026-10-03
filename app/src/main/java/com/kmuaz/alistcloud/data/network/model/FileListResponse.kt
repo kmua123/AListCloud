@@ -12,6 +12,7 @@ data class FileListResponse(
 
 data class FileListData(
 
-    val content: List<FileItem>
+    val content: List<FileItem> = emptyList(),
+    val total: Long = 0
 
 )

@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.MaterialTheme
@@ -45,13 +49,13 @@ fun SettingScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp),
+            .verticalScroll(rememberScrollState()).padding(24.dp),
 
         verticalArrangement = Arrangement.Top
     ) {
 
         Text(
-            text = "⚙ 设置",
+            text = "我的云盘",
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -78,20 +82,13 @@ fun SettingScreen() {
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("密码") },
+            label = { Text("密码") }, visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Button(
-            onClick = {},
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("测试连接")
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
+        Text("服务器设置 · 保存后下次登录生效", color = MaterialTheme.colorScheme.onSurfaceVariant)
 
         Button(
             onClick = {

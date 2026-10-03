@@ -8,6 +8,7 @@ data class FileItem(
 
     val size: Long,
 
-    val modified: String
+    val modified: String = "",
+    val parent: String? = null
 
 )

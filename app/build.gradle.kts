@@ -12,8 +12,8 @@ android {
         applicationId = "com.kmuaz.alistcloud"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.0-beta.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -57,4 +57,8 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp.logging)
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.2")
+    implementation("io.coil-kt.coil3:coil-compose:3.4.0")
+    implementation("io.github.panpf.zoomimage:zoomimage-compose-coil3:1.5.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
+    implementation("net.engawapg.lib:zoomable:2.8.0")
 }

@@ -13,3 +13,13 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+/local-backups/
+/device-validation/
+/.idea/
+/FEATURE-VALIDATION.md
+/UI-VALIDATION.md
+/publish-local/
+*.jks
+*.keystore
+keystore.properties
